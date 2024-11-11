@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  web:
+    build: .
+    volumes:
+      - .:/code
+    environment:
+      - admin_password = 1234
+      - email_from = _unused_
+      - email_user = _unused_
+      - email_password = _unused_
+      - secret_key = 1234
+      - server_name = null
+      - proxy = null
+      - db_uri=postgresql://gavel:gavel@db:5432/gavel
+      - redis_url=redis://redis:6379/0
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - gavel
+    restart: always
+  db:
+    image: postgres:11
+    environment:
+      - POSTGRES_USER=gavel
+      - POSTGRES_PASSWORD=gavel
+      - POSTGRES_DB=gavel
+    networks:
+      - gavel
+    ports:
+      - "5432:5432"  
+    restart: always
+  redis: 
+    image: redis:5
+    networks:
+      - gavel
+    ports:
+      - "6379:6379"
+    restart: always
+
